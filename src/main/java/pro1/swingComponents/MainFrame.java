@@ -11,6 +11,15 @@ import java.awt.event.MouseEvent;
 
 public class MainFrame extends JFrame {
     DisplayPanel displayPanel;
+    public OptionsPanel optionsPanel;
+
+    private int x;
+    private int y;
+    private String color = "#000000";
+
+    //  public void setColor(String color) {
+    //     this.color = color;
+    // }
 
     public MainFrame() {
         this.setTitle("PRO1 Drawing");
@@ -22,24 +31,35 @@ public class MainFrame extends JFrame {
         this.displayPanel = new DisplayPanel();
         this.add(this.displayPanel, BorderLayout.CENTER);
 
-        JPanel leftPanel = new JPanel();
-        leftPanel.setPreferredSize(
-                new Dimension(200, 0));
-        this.add(leftPanel, BorderLayout.WEST);
+        JPanel leftPanel = new OptionsPanel(this);
+
+        this.optionsPanel = new OptionsPanel(this);
+        this.add(this.optionsPanel, BorderLayout.WEST);
+
 
         this.displayPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                displayPanel.setDrawable(example(e.getX(), e.getY()));
+                int rotation = optionsPanel.getRotation();
+                House newHouse = new House(e.getX(), e.getY(), rotation, MainFrame.this);
+               displayPanel.addDrawable(newHouse);
             }
         });
+
+
     }
 
-    private Drawable example(int x, int y) {
-        var color = ColorUtils.randomColor();
-        var d1 = new Ellipse(0, 0, 150, 250, color);
-        var d2 = new Text(0, 0, color);
-        var d3 = new Line(0, 50,170,170,3, color);
-        return new Group(new Drawable[]{d1, d2, d3}, x, y, 40, 1, 1);
+    public void showExample() {
+        this.displayPanel.setDrawable(this.example());
     }
+
+    private Drawable example() {
+        //this.color = ColorUtils.randomColor();
+        var d1 = new Ellipse(0, 0, 150, 250, this.color);
+        var d2 = new Text(0, 0, this.color);
+        var d3 = new Line(0, 50, 170, 170, 3, this.color);
+        return new Group(new Drawable[]{d1, d2, d3}, this.x, this.y, 40, 1, 1);
+    }
+
+
 }
